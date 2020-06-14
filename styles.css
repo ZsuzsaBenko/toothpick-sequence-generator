@@ -1,0 +1,49 @@
+h2 {
+    text-align: center;
+}
+
+#canvas {
+    display: block;
+    margin: 50px auto;
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+}
+
+.input {
+    width: 500px;
+    padding: 20px;
+    margin: 20px auto;
+}
+
+label, input, button {
+    display: block;
+    text-align: center;
+}
+
+label {
+    width: 100%;
+}
+
+input {
+    -moz-appearance: textfield;
+    width: 20%;
+    margin: 10px auto;
+}
+
+button {
+    width: 20%;
+    margin: 10px auto;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
