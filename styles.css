@@ -1,39 +1,57 @@
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: gainsboro;
+}
+
 h2 {
     text-align: center;
+    margin-top: 30px;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 #canvas {
     display: block;
-    margin: 50px auto;
-    width: 500px;
-    height: 500px;
-    border: 1px solid black;
+    margin: 50px auto 20px;
+    width: 600px;
+    height: 600px;
+    background-color: #ffffff;
 }
 
-.input {
-    width: 500px;
-    padding: 20px;
-    margin: 20px auto;
-}
-
-label, input, button {
+input, label, button {
     display: block;
     text-align: center;
 }
 
-label {
-    width: 100%;
-}
-
 input {
     -moz-appearance: textfield;
-    width: 20%;
+    width: 50px;
     margin: 10px auto;
+    padding: 5px 5px 0;
+    font-size: 17px;
+    border: none;
+    background-color: transparent;
+    border-bottom: 1px solid #001a66;
 }
 
 button {
-    width: 20%;
-    margin: 10px auto;
+    margin: 0 auto;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #001a66;
+    color: #ffffff;
+}
+
+button:hover {
+    cursor: pointer;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -46,4 +64,50 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+
+.description {
+    width: 600px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+p {
+    line-height: 1.5rem;
+}
+
+a {
+    color: #000000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #001a66;
+}
+
+
+.sequence-table {
+    max-height: 580px;
+    width: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+table {
+    display: none;
+    text-align: right;
+}
+
+th {
+    padding: 2px 0 2px 20px;
+}
+
+th:first-child {
+    padding: 2px 0;
+}
+
+td {
+    padding: 2px;
 }

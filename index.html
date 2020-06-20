@@ -9,11 +9,30 @@
 </head>
 <body>
     <h2>Toothpick sequence generator</h2>
-    <canvas id="canvas" width="500px" height="500px"></canvas>
-    <div class="input">
-        <label for="steps">How many steps would you like?</label>
-        <input type="number" id="steps">
-        <button id="generate-btn">Generate</button>
+    <div class="flex-container">
+        <div class="generator">
+            <canvas id="canvas" width="600px" height="600px"></canvas>
+            <label for="steps">How many steps would you like (between 1 and 50)?</label>
+            <input type="number" id="steps" min="1" max="50">
+            <button id="generate-btn">Generate</button>
+        </div>
+        <div class="description">
+            <p>The toothpick sequence is a 2-dimensional pattern formed by repeatedly adding line segments ("toothpicks"). The first stage is a single toothpick.
+                Then at each step we take the previous pattern and we place another toothpick centered at a right angle on every free toothpick end.
+                <br>(Source: <a href="https://en.wikipedia.org/wiki/Toothpick_sequence">Wikipedia</a>)</p>
+            <div class="sequence-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Total</th>
+                        <th>Free</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
 </html>

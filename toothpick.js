@@ -1,72 +1,118 @@
 class ToothPickSequence {
     canvas = document.getElementById('canvas');
+    table = document.querySelector('table');
+    tbody = document.querySelector('tbody');
     context = this.canvas.getContext('2d');
-    halfLength = 10;
-    openPoints = new Map();
+    startXCoordinate = 300;
+    startYCoordinate = 300;
+    halfLength = 12;
+    color = '#001a66';
+    milliSecs = 750;
+    openCoordinates = new Map();
 
     generateFractal(steps) {
         this.reset();
-        this.openPoints.set(0, [{x: 250, y: 250, isVertical: true}]);
+        this.table.style.display = 'block';
+        this.openCoordinates.set(0, [{x: this.startXCoordinate, y: this.startYCoordinate}]);
         for (let i = 1; i <= steps; i++) {
-            const currentPoints = this.openPoints.get(i - 1);
-            this.openPoints.set(i, []);
-            for (const coords of currentPoints) {
-                const nextPoints = this.draw(coords.x, coords.y, coords.isVertical);
-                this.openPoints.set(i, [...this.openPoints.get(i), ...nextPoints]);
-            }
-            this.deleteMeetingPoints(i);
+            this.animate(i);
+        }
+    }
+
+    animate(step) {
+        setTimeout( () => {
+            this.openCoordinates.set(step, []);
+            this.setNextCoordinates(step);
+            this.deleteMeetingPoints(step);
+            this.addSequenceTableRow(step);
+        }, step * this.milliSecs);
+    }
+
+    setNextCoordinates(step) {
+        const currentCoordinates = this.openCoordinates.get(step - 1);
+        const isVertical = 0 !== step % 2;
+        for (const coords of currentCoordinates) {
+            const nextCoordinates = this.draw(coords.x, coords.y, isVertical);
+            this.openCoordinates.set(step, [...this.openCoordinates.get(step), ...nextCoordinates]);
         }
     }
 
     draw(x, y, isVertical) {
         if (this.context) {
-            let nextCoords = [];
             this.context.beginPath();
             this.context.moveTo(x, y);
-            if (isVertical) {
-                this.context.lineTo(x, y + this.halfLength);
-                this.context.moveTo(x, y);
-                this.context.lineTo(x, y - this.halfLength);
-                nextCoords =[{x, y: y + this.halfLength, isVertical: false}, {x, y: y - this.halfLength, isVertical: false}];
-            } else {
-                this.context.lineTo(x + this.halfLength, y);
-                this.context.moveTo(x, y);
-                this.context.lineTo(x - this.halfLength, y);
-                nextCoords = [{x: x + this.halfLength, y, isVertical: true}, {x: x - this.halfLength, y, isVertical: true}];
-            }
+            const nextCoords = isVertical ? this.drawVertically(x, y) : this.drawHorizontally(x, y);
+            this.context.strokeStyle = this.color;
             this.context.stroke();
             return nextCoords;
         }
     }
 
+    drawVertically(x, y) {
+        this.context.lineTo(x, y + this.halfLength);
+        this.context.moveTo(x, y);
+        this.context.lineTo(x, y - this.halfLength);
+        return [{x, y: y + this.halfLength}, {x, y: y - this.halfLength}];
+    }
+
+    drawHorizontally(x, y) {
+        this.context.lineTo(x + this.halfLength, y);
+        this.context.moveTo(x, y);
+        this.context.lineTo(x - this.halfLength, y);
+        return [{x: x + this.halfLength, y}, {x: x - this.halfLength, y}];
+    }
+
     deleteMeetingPoints(step) {
-        const currentPoints = Array.from(this.openPoints.get(step));
-        for (const [key, value] of this.openPoints.entries()) {
+        const currentCoordinates = Array.from(this.openCoordinates.get(step));
+        for (const [key, value] of this.openCoordinates.entries()) {
             for (let i = 0; i < value.length; i++) {
-                for (let j = 0; j < currentPoints.length; j++) {
-                    if (key !== step && this.areCoordinatesEqual(value[i], currentPoints[j]) ||
-                        i !== j && this.areCoordinatesEqual(value[i], currentPoints[j])) {
-                        currentPoints[j] = null;
+                for (let j = 0; j < currentCoordinates.length; j++) {
+                    if (key !== step && this.areCoordinatesEqual(value[i], currentCoordinates[j]) ||
+                        i !== j && this.areCoordinatesEqual(value[i], currentCoordinates[j])) {
+                        currentCoordinates[j] = null;
                     }
                 }
             }
         }
-        const filtered = currentPoints.filter(obj => null !== obj);
-        this.openPoints.set(step, filtered);
+        const filtered = currentCoordinates.filter(obj => null !== obj);
+        this.openCoordinates.set(step, filtered);
     }
 
-    areCoordinatesEqual(point1, point2) {
-        return (point1 && point2) ? point1.x === point2.x && point1.y === point2.y : false;
+    areCoordinatesEqual(coord1, coord2) {
+        return (coord1 && coord2) ? coord1.x === coord2.x && coord1.y === coord2.y : false;
     }
 
     reset() {
-        this.openPoints = new Map();
+        this.tbody.innerHTML = '';
+        this.openCoordinates = new Map();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    addSequenceTableRow(step) {
+        const row = document.createElement('tr');
+        const tdStep = document.createElement('td');
+        const tdTotal = document.createElement('td');
+        const tdFree = document.createElement('td');
+        tdStep.textContent = step;
+        tdTotal.textContent = this.sumToothpicks(step);
+        tdFree.textContent = this.openCoordinates.get(step).length;
+        row.appendChild(tdStep);
+        row.appendChild(tdTotal);
+        row.appendChild(tdFree);
+        this.tbody.appendChild(row);
+    }
+
+    sumToothpicks(step) {
+        return (Array.from(this.openCoordinates.values()))
+            .map(arr => arr.length)
+            .reduce((prev, curr) => prev + curr) - this.openCoordinates.get(step).length;
     }
 }
 
 const toothPickSequence = new ToothPickSequence();
 const generateBtn = document.getElementById('generate-btn');
 const steps = document.getElementById('steps');
-generateBtn.addEventListener('click', () => toothPickSequence.generateFractal(steps.value));
-
+generateBtn.addEventListener('click', () => {
+    const stepNumber = 0 < steps.value && 50 >= steps.value ? steps.value : 0;
+    toothPickSequence.generateFractal(stepNumber);
+});
